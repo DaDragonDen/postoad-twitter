@@ -4,14 +4,18 @@ module.exports = (_, collections) => {
 
   new commands.new("reply", "Reply to a Tweet on behalf of the server.", async (bot, interaction) => {
 
-    const subcommand = interaction.data.options[0];
-    const content = subcommand.options[1] && subcommand.options[1].value;
+    let subcommand;
+    let content;
     let twitter;
     let match; 
     let tweetId;
     let tweet;
 
+    // Make sure they have permission to do this
+    await require("../modules/check-permissions")(interaction.member, collections);
+
     // Get the Tweet ID
+    subcommand = interaction.data.options[0]
     match = [...subcommand.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
 
     if (!match) throw new Error("that isn't a tweet");
@@ -20,7 +24,8 @@ module.exports = (_, collections) => {
 
     // Get the Twitter client
     twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
-
+    content = subcommand.options[1] && subcommand.options[1].value;
+    
     switch (subcommand.name) {
 
       case "text": {

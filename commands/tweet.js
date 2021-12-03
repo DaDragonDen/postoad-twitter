@@ -4,9 +4,16 @@ module.exports = (_, collections, prepareForMedia) => {
 
   new commands.new("tweet", "Tweet something on behalf of the server.", async (bot, interaction) => {
     
-    const subcommand = interaction.data.options[0];
-    const content = subcommand.options && subcommand.options[0].value;
-    const twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    let subcommand;
+    let content;
+    let twitter;
+
+    // Make sure they have permission to do this
+    await require("../modules/check-permissions")(interaction.member, collections);
+
+    subcommand = interaction.data.options[0];
+    content = subcommand.options && subcommand.options[0].value;
+    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
     
     switch (subcommand.name) {
 

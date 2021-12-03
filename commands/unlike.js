@@ -9,6 +9,9 @@ module.exports = (_, collections) => {
     let match; 
     let tweetId;
 
+    // Make sure they have permission to do this
+    await require("../modules/check-permissions")(interaction.member, collections);
+
     // Get Tweet ID
     match = [...interaction.data.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
 

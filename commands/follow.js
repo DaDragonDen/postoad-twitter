@@ -7,9 +7,13 @@ module.exports = (_, collections) => {
     let twitter;
     let user; 
     let targetUser;
-    let username = interaction.data.options[0].value;
+    let username;
+
+    // Make sure they have permission to do this
+    await require("../modules/check-permissions")(interaction.member, collections);
 
     // Make sure it's a valid username
+    username = interaction.data.options[0].value;
     if (!/^@?(\w){1,15}$/gm.test(username)) throw new Error(`"${username}" isn't a valid Twitter username`);
 
     // Get the user ID
