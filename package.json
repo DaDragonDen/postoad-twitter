@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.6",
+    "eris": "^0.16.1",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.6",
+    "node-cache": "^5.1.2",
+    "node-fetch": "^3.1.0",
+    "twitter-api-v2": "^1.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
+  }
+}
