@@ -108,50 +108,43 @@ bot.once("ready", async () => {
       if (mediaRequest) {
 
         // Prepare the Twitter client
-        const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: msg.channel.guild.id});
+        twitterClient = require("./modules/twitter")(msg.channel.guild.id);
 
-        // Check if we're authorized
-        if (!twitterAuth || !twitterAuth.access_token || !twitterAuth.access_secret) return await interaction.createFollowup("i don't have permission to use twitter in this server");
+        if (twitterClient) {
 
-        // Set up the client 
-        twitterClient = new TwitterApi({
-          appKey: process.env.twitterAPIKey,
-          appSecret: process.env.twitterAPIKeySecret,
-          accessToken: twitterAuth.access_token,
-          accessSecret: twitterAuth.access_secret
-        });
+          for (let i = 0; attachments.length > i; i++) {
 
-        for (let i = 0; attachments.length > i; i++) {
+            // Make sure the media type is allowed
+            attachment = attachments[i];
 
-          // Make sure the media type is allowed
-          attachment = attachments[i];
+            if (!allowedMediaTypes[attachment.content_type]) {
 
-          if (!allowedMediaTypes[attachment.content_type]) {
+              disallowedMediaCount++;
+              continue;
 
-            disallowedMediaCount++;
-            continue;
+            };
 
-          };
+            // Get the attachment buffers and get the media IDs
+            attachmentResponse = await fetch(attachment.url);
+            attachmentBody = await attachmentResponse.arrayBuffer();
+            mediaIds.push(await twitterClient.v1.uploadMedia(Buffer.from(attachmentBody), {type: "png"}));
 
-          // Get the attachment buffers and get the media IDs
-          attachmentResponse = await fetch(attachment.url);
-          attachmentBody = await attachmentResponse.arrayBuffer();
-          mediaIds.push(await twitterClient.v1.uploadMedia(Buffer.from(attachmentBody), {type: "png"}));
+          }
+
+          // Upload the Tweet
+          const {data: tweet} = await twitterClient.v2.tweet(mediaRequest.content, {media: {media_ids: mediaIds}});
+
+          return await msg.channel.createMessage({
+            content: "done https://twitter.com/i/status/" + tweet.id,
+            allowedMentions: {
+              repliedUser: true
+            },
+            messageReference: {
+              messageID: msg.id
+            }
+          });
 
         }
-
-        // Upload the Tweet
-        const {data: tweet} = await twitterClient.v2.tweet(mediaRequest.content, {media: {media_ids: mediaIds}});
-
-        return await msg.channel.createMessage({
-          content: "done https://twitter.com/i/status/" + tweet.id,
-          allowedMentions: {
-            repliedUser: true
-          },
-          messageReference: {
-            messageID: msg.id
-          }
-        });
 
       }
 
@@ -159,10 +152,17 @@ bot.once("ready", async () => {
       const tweets = [...msg.content.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
       if (tweets && msg.member && msg.member.roles.find(roleId => roleId === "895145350397067274") && msg.channel.parentID === "790370734736146452") {
 
-        for (let x = 0; tweets.length > x; x++) {
+        twitterClient = await require("./modules/twitter")(msg.channel.guild.id, {collections: collections});
+        twitterUser = await twitterClient.currentUser();
 
-          // Retweet the Tweet
-          await require("./modules/twitter").retweet(msg, tweets[x].groups.tweetId);
+        if (twitterClient) {
+
+          for (let x = 0; tweets.length > x; x++) {
+
+            // Retweet the Tweet
+            twitterClient.v2.retweet(twitterUser.id_str, tweets[x].groups.tweetId);
+
+          }
 
         }
 
@@ -181,9 +181,6 @@ bot.once("ready", async () => {
     console.log("\x1b[33m%s\x1b[0m", "[Eris]: " + err);
 
   });
-
-  // Load Twitter module
-  await require("./modules/twitter").setCollections(collections);
   
   // Load the web server
   require("./server")(bot, collections);

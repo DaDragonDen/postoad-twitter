@@ -5,29 +5,24 @@ module.exports = (_, collections) => {
 
   new commands.new("unlike", "Unlike something on Twitter on behalf of the server.", async (bot, interaction) => {
     
-    const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: interaction.guildID});
-    let twitter, user, match, tweetId;
+    let twitter;
+    let user;
+    let match; 
+    let tweetId;
 
-    // Check if we're authorized
-    if (!twitterAuth || !twitterAuth.access_token || !twitterAuth.access_secret) return await interaction.createFollowup("i don't have permission to use twitter in this server");
-
-    // Set up the client 
-    twitter = new TwitterApi({
-      appKey: process.env.twitterAPIKey,
-      appSecret: process.env.twitterAPIKeySecret,
-      accessToken: twitterAuth.access_token,
-      accessSecret: twitterAuth.access_secret
-    });
-    user = await twitter.currentUser();
-
-    // Unlike the Tweet
+    // Get Tweet ID
     match = [...interaction.data.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
-    if (!match) return await interaction.createFollowup("that isn't a tweet");
+
+    if (!match) throw new Error("That isn't a Tweet");
 
     tweetId = match[0][1];
 
+    // Unlike the Tweet
+    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    user = await twitter.currentUser();
+    
     await twitter.v2.unlike(user.id_str, tweetId);
-    await interaction.createFollowup("done");
+    await interaction.createFollowup("heartbroken 💔");
 
   }, 0, [
     {

@@ -5,21 +5,9 @@ module.exports = (_, collections, prepareForMedia) => {
 
   new commands.new("tweet", "Tweet something on behalf of the server.", async (bot, interaction) => {
     
-    const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: interaction.guildID});
     const subcommand = interaction.data.options[0];
     const content = subcommand.options && subcommand.options[0].value;
-    let twitter;
-
-    // Check if we're authorized
-    if (!twitterAuth || !twitterAuth.access_token || !twitterAuth.access_secret) return await interaction.createFollowup("i don't have permission to use twitter in this server");
-
-    // Set up the client 
-    twitter = new TwitterApi({
-      appKey: process.env.twitterAPIKey,
-      appSecret: process.env.twitterAPIKeySecret,
-      accessToken: twitterAuth.access_token,
-      accessSecret: twitterAuth.access_secret
-    }); 
+    const twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
     
     switch (subcommand.name) {
 

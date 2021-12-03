@@ -2,29 +2,26 @@ const {TwitterApi} = require("twitter-api-v2");
 const commands = require("../commands");
 
 module.exports = (_, collections) => {
+  
   new commands.new("block", "Block someone on Twitter on behalf of the server.", async (bot, interaction) => {
     
-    const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: interaction.guildID});
-    let twitter, user, targetUser;
+    let twitter;
+    let user; 
+    let targetUser;
+    let username = interaction.data.options[0].value;
 
-    // Check if we're authorized
-    if (!twitterAuth || !twitterAuth.access_token || !twitterAuth.access_secret) return await interaction.createFollowup("i don't have permission to use twitter in this server");
-
-    // Set up the client 
-    twitter = new TwitterApi({
-      appKey: process.env.twitterAPIKey,
-      appSecret: process.env.twitterAPIKeySecret,
-      accessToken: twitterAuth.access_token,
-      accessSecret: twitterAuth.access_secret
-    });
-    user = await twitter.currentUser();
+    // Make sure it's a valid username
+    if (!/^@?(\w){1,15}$/gm.test(username)) throw new Error(`"${username}" isn't a valid Twitter username`);
 
     // Get the user ID
-    targetUser = await twitter.v2.usersByUsernames(interaction.data.options[0].value);
+    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    targetUser = await twitter.v2.usersByUsernames(username);
+    if (!targetUser) throw new Error(`@${username} doesn't exist :(`);
 
-    // Unfollow the user
+    // Block the user
+    user = await twitter.currentUser();
     await twitter.v2.block(user.id_str, targetUser.data[0].id);
-    await interaction.createFollowup("`you've been blocked`");
+    await interaction.createFollowup(`@${username} has been...\`blocked.\``);
 
   }, 0, [
     {
