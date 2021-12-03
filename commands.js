@@ -29,13 +29,11 @@ class Command {
     // Execute the command
     try {
 
-      return await this.action(bot, interaction);
+      await this.action(bot, interaction);
 
     } catch (err) {
 
-      console.log(err);
-
-      return bot.createInteractionResponse(interaction.id, interaction.token, {content: "Uh oh. Something real bad happened. Let's try that again."});
+      await interaction.createFollowup(err.message);
 
     }
 
