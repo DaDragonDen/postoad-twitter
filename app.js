@@ -5,12 +5,26 @@ const Eris = require("eris");
 const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
 const {TwitterApi} = require("twitter-api-v2");
 
-// Get environment variables
 require("dotenv").config();
 
-// Get ready to load the database
-let database, dbClient, db, collections;
-async function loadDB() {
+const bot = new Eris(process.env.token, {requestTimeout: 30000});
+const mediaList = {};
+const allowedMediaTypes = {
+  "image/png": 1,
+  "image/jpg": 1,
+  "image/gif": 1
+};
+const prepareForMedia = async (interaction, content) => {
+
+  const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload. `you have 2 minutes` 👻");
+
+  mediaList[message.id] = {
+    poster: interaction.member.id,
+    content: content
+  }
+
+};
+const loadDB = async () => {
 
   console.log("\x1b[36m%s\x1b[0m", "[Client] Updating database variables...");
 
@@ -23,37 +37,19 @@ async function loadDB() {
 
   console.log("\x1b[32m%s\x1b[0m", "[Client] Database variables updated");
   
-}
-
-const mediaList = {};
-
-const prepareForMedia = async (interaction, content) => {
-
-  const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload. `you have 2 minutes` 👻");
-
-  mediaList[message.id] = {
-    poster: interaction.member.id,
-    content: content
-  }
-
 };
-
-// Load Discord
-const bot = new Eris(process.env.token, {requestTimeout: 30000});
-const allowedMediaTypes = {
-  "image/png": 1,
-  "image/jpg": 1,
-  "image/gif": 1
-}
+let commandList;
+let database;
+let dbClient;
+let db;
+let collections;
 let commands;
 
+// Load Discord
 bot.once("ready", async () => {
   
-  const folders = ["commands"];
-  let commandList;
-
-  // Time how long it takes for the bot to really start
   const startTime = new Date().getTime();
+
   console.log("\x1b[32m%s\x1b[0m", "[Client] Logged in!");
 
   // Load the database
@@ -61,17 +57,12 @@ bot.once("ready", async () => {
   
   // Load all commands
   commands = require("./commands");
-
   await commands.initialize(bot, collections);
-  for (let i = 0; folders.length > i; i++) {
+  const files = fs.readdirSync(path.join(__dirname, "commands"));
+  for (let x = 0; files.length > x; x++) {
 
-    const files = fs.readdirSync(path.join(__dirname, folders[i]));
-    for (let x = 0; files.length > x; x++) {
-
-      const file = require("./" + folders[i] + "/" + files[x]);
-      if (typeof(file) === "function") await file(bot, collections, prepareForMedia);
-
-    }
+    const file = require("./commands/" + files[x]);
+    if (typeof(file) === "function") await file(bot, collections, prepareForMedia);
 
   }
 
