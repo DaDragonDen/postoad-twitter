@@ -1,4 +1,3 @@
-const {TwitterApi} = require("twitter-api-v2");
 const commands = require("../commands");
 
 module.exports = (_, collections, prepareForMedia) => {
