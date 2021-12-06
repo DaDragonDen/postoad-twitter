@@ -2,8 +2,8 @@ const commands = require("../commands");
 
 module.exports = (_, collections) => {
 
-  new commands.new("like", "Like something on Twitter on behalf of the server.", async (bot, interaction) => {
-    
+  const toggleLike = async (interaction, action) => {
+
     let twitter;
     let user;
     let match; 
@@ -20,16 +20,27 @@ module.exports = (_, collections) => {
     tweetId = match[0][1];
 
     // Like the Tweet
-    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    twitter = await require("../modules/twitter")(interaction.guildID, collections);
     user = await twitter.currentUser();
     
-    await twitter.v2.like(user.id_str, tweetId);
-    await interaction.createFollowup("this is the one ♥");
+    await twitter.v2[action](user.id_str, tweetId);
+    await interaction.createFollowup(action === "like" ? "this is the one ♥" : "heartbroken 💔");
 
-  }, 0, [
+  }
+
+  new commands.new("like", "Like something on Twitter on behalf of the server.", async (bot, interaction) => await toggleLike(interaction, "like"), 0, [
     {
       name: "tweet_url",
       description: "What do you want to like?",
+      type: 3,
+      required: true
+    }
+  ]);
+
+  new commands.new("unlike", "Unlike something on Twitter on behalf of the server.", async (bot, interaction) => await toggleLike(interaction, "unlike"), 0, [
+    {
+      name: "tweet_url",
+      description: "What do you want to unlike?",
       type: 3,
       required: true
     }

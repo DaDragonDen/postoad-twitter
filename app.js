@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const Eris = require("eris");
 const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
-const {TwitterApi} = require("twitter-api-v2");
 
 require("dotenv").config();
 
@@ -80,11 +79,10 @@ bot.once("ready", async () => {
 
   bot.on("messageCreate", async (msg) => {
 
-    const referencedMessage = msg.referencedMessage;
-    const mediaRequest = referencedMessage && mediaList[referencedMessage.id];
-    const attachments = msg.attachments;
-    let mediaIds = [];
-    let disallowedMediaCount = 0;
+    let referencedMessage;
+    let mediaRequest;
+    let attachments;
+    let mediaIds;
     let attachment;
     let attachmentBody;
     let attachmentResponse;
@@ -96,24 +94,25 @@ bot.once("ready", async () => {
       if (msg.author.bot) return;
 
       // Check if it's media
+      referencedMessage = msg.referencedMessage;
+      mediaRequest = referencedMessage && mediaList[referencedMessage.id];
+      
       if (mediaRequest) {
 
         // Prepare the Twitter client
-        twitterClient = require("./modules/twitter")(msg.channel.guild.id);
+        twitterClient = require("./modules/twitter")(msg.channel.guild.id, collections);
 
         if (twitterClient) {
+
+          attachments = msg.attachments;
+          mediaIds = [];
 
           for (let i = 0; attachments.length > i; i++) {
 
             // Make sure the media type is allowed
             attachment = attachments[i];
 
-            if (!allowedMediaTypes[attachment.content_type]) {
-
-              disallowedMediaCount++;
-              continue;
-
-            };
+            if (!allowedMediaTypes[attachment.content_type]) continue;
 
             // Get the attachment buffers and get the media IDs
             attachmentResponse = await fetch(attachment.url);
@@ -143,7 +142,7 @@ bot.once("ready", async () => {
       const tweets = [...msg.content.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
       if (tweets && msg.member && msg.member.roles.find(roleId => roleId === "895145350397067274") && msg.channel.parentID === "790370734736146452") {
 
-        twitterClient = await require("./modules/twitter")(msg.channel.guild.id, {collections: collections});
+        twitterClient = await require("./modules/twitter")(msg.channel.guild.id, collections);
         twitterUser = await twitterClient.currentUser();
 
         if (twitterClient) {

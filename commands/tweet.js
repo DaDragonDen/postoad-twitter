@@ -13,7 +13,7 @@ module.exports = (_, collections, prepareForMedia) => {
 
     subcommand = interaction.data.options[0];
     content = subcommand.options && subcommand.options[0].value;
-    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    twitter = await require("../modules/twitter")(interaction.guildID, collections);
     
     switch (subcommand.name) {
 

@@ -15,7 +15,7 @@ module.exports = (_, collections) => {
     await require("../modules/check-permissions")(interaction.member, collections);
 
     // Get the Tweet ID
-    subcommand = interaction.data.options[0]
+    subcommand = interaction.data.options[0];
     match = [...subcommand.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
 
     if (!match) throw new Error("that isn't a tweet");
@@ -23,7 +23,7 @@ module.exports = (_, collections) => {
     tweetId = match[0][1];
 
     // Get the Twitter client
-    twitter = await require("../modules/twitter")(interaction.guildID, {interaction: interaction, collections: collections});
+    twitter = await require("../modules/twitter")(interaction.guildID, collections);
     content = subcommand.options[1] && subcommand.options[1].value;
     
     switch (subcommand.name) {

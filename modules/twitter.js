@@ -1,6 +1,6 @@
 const {TwitterApi} = require("twitter-api-v2");
 
-module.exports = async (guildId, {interaction, collections}) => {
+module.exports = async (guildId, collections) => {
   
   const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: guildId});
 
