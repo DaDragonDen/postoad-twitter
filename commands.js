@@ -5,9 +5,10 @@ const cooledUsers = {};
 require("dotenv").config();
 
 let configuredCommands = [];
+let followups = {};
 class Command {
-
-  async execute(interaction) {
+  
+  async execute(interaction, componentResponse) {
 
     // Acknowledge the interaction
     await interaction.acknowledge();
@@ -27,13 +28,18 @@ class Command {
     this.applyCooldown(AuthorId);
 
     // Execute the command
+    let waitForComponent = (followupId) => {
+      followups[followupId] = this.name;
+    }
     try {
 
-      await this.action(bot, interaction);
+      return await this.action(bot, interaction, waitForComponent, componentResponse);
 
     } catch (err) {
 
-      await interaction.createFollowup(err.message);
+      console.log(err);
+
+      return await interaction.createFollowup(interaction.id, interaction.token, {content: "Uh oh. Something real bad happened. Let's try that again."});
 
     }
 
@@ -177,23 +183,35 @@ async function initialize(client) {
   // Listen to interactions
   client.on("interactionCreate", async (interaction) => {
     
-    let interactionName, command, response;
-
-    // Make sure it's a command
-    if (interaction.type !== 2) return;
-
-    // Check if the command exists
-    interactionName = interaction.data.name;
-    command = commands[interactionName];
+    let interactionName, command;
     
-    if (command) {
+    // Make sure it's a command
+    if (interaction.type === 2) {
 
-      await command.execute(interaction);
+      // Check if the command exists
+      interactionName = interaction.data.name;
+      command = commands[interactionName];
+      
+      if (command) {
+  
+        await command.execute(interaction);
+  
+      } else {
+  
+        await bot.deleteCommand(interaction.data.id);
+  
+      }
 
     } else {
 
-      await bot.deleteCommand(interaction.data.id);
+      command = commands[followups[interaction.message.id]];
+      if (command) {
 
+        followups[interaction.message.id] = undefined;
+        await command.execute(interaction, true);
+        
+      }
+      
     }
 
 

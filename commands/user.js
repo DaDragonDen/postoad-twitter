@@ -1,8 +1,9 @@
+/*
 const commands = require("../commands");
 
 module.exports = (_, collections) => {
 
-  new commands.new("update", "Update the server's Twitter profile", async (bot, interaction, prepareForMedia) => {
+  new commands.new("user", "View or edit user settings", async (bot, interaction, prepareForMedia) => {
     
     let twitter;
     let subcommand;
@@ -38,17 +39,9 @@ module.exports = (_, collections) => {
 
   }, 0, [
     {
-      name: "name",
-      description: "Update the display name of the server's Twitter profile",
-      type: 1,
-      options: [
-        {
-          name: "new_name",
-          description: "What should the account be called?",
-          type: 3,
-          required: true
-        }
-      ]
+      name: "authorize",
+      description: "Authorize Postoad to post to Twitter on behalf of the server",
+      type: 1
     },
     {
       name: "url",
@@ -129,3 +122,4 @@ module.exports = (_, collections) => {
   ]);
   
 }
+*/

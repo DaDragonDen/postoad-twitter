@@ -6,20 +6,26 @@ const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch
 
 require("dotenv").config();
 
-const bot = new Eris(process.env.token, {requestTimeout: 30000});
-const mediaList = {};
 const allowedMediaTypes = {
   "image/png": 1,
   "image/jpg": 1,
   "image/gif": 1
 };
-const prepareForMedia = async (interaction, content) => {
+const mediaList = {};
+let commandList;
+let dbClient;
+let db;
+let collections;
+let commands;
+let bot;
+const prepareForMedia = async (interaction, content, type) => {
 
-  const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload. `you have 2 minutes` 👻");
+  const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload");
 
   mediaList[message.id] = {
     poster: interaction.member.id,
-    content: content
+    content: content,
+    type: type
   }
 
 };
@@ -27,8 +33,7 @@ const loadDB = async () => {
 
   console.log("\x1b[36m%s\x1b[0m", "[Client] Updating database variables...");
 
-  database = await require("./database");
-  dbClient = database.mongoClient;
+  dbClient = await require("./database");
   db = dbClient.db("guilds");
   collections = {
     twitterAuthInfo: db.collection("TwitterAuthorizationInfo")
@@ -37,14 +42,10 @@ const loadDB = async () => {
   console.log("\x1b[32m%s\x1b[0m", "[Client] Database variables updated");
   
 };
-let commandList;
-let database;
-let dbClient;
-let db;
-let collections;
-let commands;
 
 // Load Discord
+bot = new Eris(process.env.token, {requestTimeout: 30000});
+
 bot.once("ready", async () => {
   
   const startTime = new Date().getTime();
