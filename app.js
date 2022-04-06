@@ -6,6 +6,7 @@ import { config as loadEnvironmentVariables } from "dotenv";
 import fetch from "node-fetch";
 import initializeDB from "./database.js";
 import {initialize as initializeCommands, listCommands} from "./commands.js";
+import getTwitterClient from "./modules/twitter.js";
 
 // Set up the environment variables in .env.
 loadEnvironmentVariables();
@@ -43,7 +44,7 @@ loadEnvironmentVariables();
       if (mediaRequest) {
 
         // Prepare the Twitter client
-        const twitterClient = (await import("./modules/twitter.js")).default(msg.channel.guild.id, collections);
+        const twitterClient = await getTwitterClient(msg.channel.guild.id, collections);
 
         if (twitterClient) {
 
@@ -85,10 +86,11 @@ loadEnvironmentVariables();
       const tweets = [...msg.content.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
       if (tweets && msg.member && msg.member.roles.find(roleId => roleId === "895145350397067274") && msg.channel.parentID === "790370734736146452") {
 
-        const twitterClient = (await import("./modules/twitter.js")).default(msg.channel.guild.id, collections);
-        const twitterUser = await twitterClient.currentUser();
+        const twitterClient = await getTwitterClient(msg.channel.guild.id, collections);
 
         if (twitterClient) {
+
+          const twitterUser = await twitterClient.currentUser();
 
           for (let x = 0; tweets.length > x; x++) {
 
