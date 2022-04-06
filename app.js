@@ -43,7 +43,7 @@ loadEnvironmentVariables();
       if (mediaRequest) {
 
         // Prepare the Twitter client
-        const twitterClient = import("./modules/twitter")(msg.channel.guild.id, collections);
+        const twitterClient = (await import("./modules/twitter")).default(msg.channel.guild.id, collections);
 
         if (twitterClient) {
 
@@ -85,7 +85,7 @@ loadEnvironmentVariables();
       const tweets = [...msg.content.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
       if (tweets && msg.member && msg.member.roles.find(roleId => roleId === "895145350397067274") && msg.channel.parentID === "790370734736146452") {
 
-        const twitterClient = await import("./modules/twitter")(msg.channel.guild.id, collections);
+        const twitterClient = (await import("./modules/twitter")).default(msg.channel.guild.id, collections);
         const twitterUser = await twitterClient.currentUser();
 
         if (twitterClient) {
