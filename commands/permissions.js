@@ -1,8 +1,8 @@
-const commands = require("../commands");
+import { Command } from "../commands.js";
 
-module.exports = (_, collections) => {
+export default (_, collections) => {
 
-  new commands.new("permissions", "View or modify permissions for a member or role", async (bot, interaction) => {
+  new Command("permissions", "View or modify permissions for a member or role", async (bot, interaction) => {
 
   }, 0, [
     {
@@ -70,4 +70,4 @@ module.exports = (_, collections) => {
     }
   ]);
 
-}
+};

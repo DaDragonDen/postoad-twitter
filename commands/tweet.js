@@ -1,19 +1,15 @@
-const commands = require("../commands");
+import { Command } from "../commands.js";
 
-module.exports = (_, collections, prepareForMedia) => {
+export default (_, collections, prepareForMedia) => {
 
-  new commands.new("tweet", "Tweet something on behalf of the server.", async (bot, interaction) => {
-    
-    let subcommand;
-    let content;
-    let twitter;
+  new Command("tweet", "Tweet something on behalf of the server.", async (bot, interaction) => {
 
     // Make sure they have permission to do this
-    await require("../modules/check-permissions")(interaction.member, collections);
+    await require("../modules/check-permissions").default(interaction.member, collections);
 
-    subcommand = interaction.data.options[0];
-    content = subcommand.options && subcommand.options[0].value;
-    twitter = await require("../modules/twitter")(interaction.guildID, collections);
+    const subcommand = interaction.data.options[0];
+    const content = subcommand.options && subcommand.options[0].value;
+    const twitter = await require("../modules/twitter").default(interaction.guildID, collections);
     
     switch (subcommand.name) {
 
@@ -29,6 +25,7 @@ module.exports = (_, collections, prepareForMedia) => {
 
         // Prepare to get media
         await prepareForMedia(interaction, content);
+        break;
 
       default:
         break;
@@ -63,4 +60,4 @@ module.exports = (_, collections, prepareForMedia) => {
     }
   ]);
   
-}
+};

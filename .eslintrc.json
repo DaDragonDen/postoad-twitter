@@ -78,6 +78,10 @@
         "no-multi-spaces": "warn",
         "import/order": "warn",
         "camelcase": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "no-shadow": "warn",
+        "curly": "warn",
+        "space-in-parens": "warn",
+        "import/extensions": "off"
     }
 }

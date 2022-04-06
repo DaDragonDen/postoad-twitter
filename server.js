@@ -1,11 +1,12 @@
-const express = require("express");
-const path = require("path");
+import path, { dirname } from "path";
+import express from "express";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(dirname(fileURLToPath(import.meta.url)), "views"));
 
-module.exports = (bot, collections) => {
+export default (bot, collections) => {
 
   app.get("*", (req, res) => res.sendStatus(200));
 

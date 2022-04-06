@@ -1,4 +1,4 @@
-module.exports = async (member, collections) => {
+export default async (member) => {
 
   if (!member) {
     
@@ -10,4 +10,4 @@ module.exports = async (member, collections) => {
 
   }
 
-}
+};

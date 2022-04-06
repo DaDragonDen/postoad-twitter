@@ -1,7 +1,7 @@
 /*
 const commands = require("../commands");
 
-module.exports = (_, collections) => {
+export default (_, collections) => {
 
   new commands.new("user", "View or edit user settings", async (bot, interaction, prepareForMedia) => {
     

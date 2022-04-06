@@ -1,6 +1,6 @@
-const {TwitterApi} = require("twitter-api-v2");
+import { TwitterApi } from "twitter-api-v2";
 
-module.exports = async (guildId, collections) => {
+export default async (guildId, collections) => {
   
   const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: guildId});
 
@@ -19,4 +19,4 @@ module.exports = async (guildId, collections) => {
     accessSecret: twitterAuth.access_secret
   });
 
-}
+};

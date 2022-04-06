@@ -1,18 +1,15 @@
-const commands = require("../commands");
+import { Command } from "../commands.js";
 
-module.exports = (_, collections) => {
+export default (_, collections) => {
 
-  new commands.new("update", "Update the server's Twitter profile", async (bot, interaction, prepareForMedia) => {
-    
-    let twitter;
-    let subcommand;
+  new Command("update", "Update the server's Twitter profile", async (bot, interaction, prepareForMedia) => {
 
     // Make sure they have permission to do this
     await require("../modules/check-permissions")(interaction.member, collections);
 
     // Find out what they want to do
-    subcommand = interaction.data.options[0];
-    twitter = await require("../modules/twitter")(interaction.guildID, collections);
+    const subcommand = interaction.data.options[0];
+    const twitter = await require("../modules/twitter")(interaction.guildID, collections);
     
     switch (subcommand.name) {
 
@@ -128,4 +125,4 @@ module.exports = (_, collections) => {
     }
   ]);
   
-}
+};
