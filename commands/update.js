@@ -1,15 +1,17 @@
 import { Command } from "../commands.js";
+import verifyPermissions from "../modules/check-permissions.js";
+import getTwitterClient from "../modules/twitter.js";
 
 export default (_, collections) => {
 
   new Command("update", "Update the server's Twitter profile", async (bot, interaction, prepareForMedia) => {
 
     // Make sure they have permission to do this
-    await require("../modules/check-permissions")(interaction.member, collections);
+    await verifyPermissions(interaction.member, collections);
 
     // Find out what they want to do
     const subcommand = interaction.data.options[0];
-    const twitter = await require("../modules/twitter")(interaction.guildID, collections);
+    const twitter = await getTwitterClient(interaction.guildID, collections);
     
     switch (subcommand.name) {
 

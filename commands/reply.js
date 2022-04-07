@@ -1,11 +1,13 @@
 import { Command } from "../commands.js";
+import verifyPermissions from "../modules/check-permissions.js";
+import getTwitterClient from "../modules/twitter.js";
 
 export default (_, collections) => {
 
   new Command("reply", "Reply to a Tweet on behalf of the server.", async (bot, interaction) => {
 
     // Make sure they have permission to do this
-    await require("../modules/check-permissions").default(interaction.member, collections);
+    await verifyPermissions(interaction.member, collections);
 
     // Get the Tweet ID
     const subcommand = interaction.data.options[0];
@@ -16,7 +18,7 @@ export default (_, collections) => {
     const tweetId = match[0][1];
 
     // Get the Twitter client
-    const twitter = await require("../modules/twitter").default(interaction.guildID, collections);
+    const twitter = await getTwitterClient(interaction.guildID, collections);
     const content = subcommand.options[1] && subcommand.options[1].value;
     
     switch (subcommand.name) {

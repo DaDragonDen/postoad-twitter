@@ -7,6 +7,7 @@ import fetch from "node-fetch";
 import initializeDB from "./database.js";
 import {initialize as initializeCommands, listCommands} from "./commands.js";
 import getTwitterClient from "./modules/twitter.js";
+import launchWebServer from "./server.js";
 
 // Set up the environment variables in .env.
 loadEnvironmentVariables();
@@ -43,7 +44,7 @@ loadEnvironmentVariables();
 
       if (mediaRequest) {
 
-        // Prepare the Twitter client
+        // Make sure that this server has Twitter set up.
         const twitterClient = await getTwitterClient(msg.channel.guild.id, collections);
 
         if (twitterClient) {
@@ -51,6 +52,7 @@ loadEnvironmentVariables();
           const {attachments} = msg;
           const mediaIds = [];
 
+          // Iterate through every attachment.
           for (let i = 0; attachments.length > i; i++) {
 
             // Make sure the media type is allowed
@@ -65,7 +67,7 @@ loadEnvironmentVariables();
 
           }
 
-          // Upload the Tweet
+          // Upload the Tweet.
           const { data: tweet } = await twitterClient.v2.tweet(mediaRequest.content, { media: { media_ids: mediaIds } });
 
           return await msg.channel.createMessage({
@@ -165,7 +167,7 @@ loadEnvironmentVariables();
     }
 
     // Load the web server.
-    (await import("./server.js")).default(bot, collections);
+    launchWebServer(bot, collections);
 
     // Display how long it took to load the commands.
     console.log("\x1b[32m%s\x1b[0m", "[Discord] Ready to roll! It took " + (new Date().getTime() - startTime) / 1000 + " seconds");

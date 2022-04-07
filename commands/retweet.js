@@ -1,11 +1,13 @@
 import { Command } from "../commands.js";
+import verifyPermissions from "../modules/check-permissions.js";
+import getTwitterClient from "../modules/twitter.js";
 
 export default (_, collections) => {
 
   const toggleRetweet = async (interaction, action) => {
 
     // Make sure they have permission to do this
-    await require("../modules/check-permissions")(interaction.member, collections);
+    await verifyPermissions(interaction.member, collections);
 
     // Get Tweet ID
     const match = [...interaction.data.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
@@ -15,7 +17,7 @@ export default (_, collections) => {
     const tweetId = match[0][1];
 
     // Retweet the Tweet
-    const twitter = await require("../modules/twitter")(interaction.guildID, collections);
+    const twitter = await getTwitterClient(interaction.guildID, collections);
     const user = await twitter.currentUser();
     
     await twitter.v2[action](user.id_str, tweetId);
