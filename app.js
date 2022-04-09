@@ -23,9 +23,9 @@ loadEnvironmentVariables();
   const mediaList = {};
   const bot = new DiscordClient(process.env.discordToken, { requestTimeout: 30000 });
   const dbClient = await initializeDB();
-  const db = dbClient.db("guilds");
+  const db = dbClient.db("social");
   const collections = {
-    twitterAuthInfo: db.collection("TwitterAuthorizationInfo")
+    twitterAuthInfo: db.collection("TwitterAuthorizationCredentials")
   };
 
   // Load the Discord client events.

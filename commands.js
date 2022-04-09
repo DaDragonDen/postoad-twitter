@@ -6,7 +6,7 @@ const followups = {};
 
 class Command {
 
-  constructor(name, description, action, cooldown, slashOptions) {
+  constructor({name, description, action, cooldown, slashOptions, ephemeral}) {
 
     console.log("\x1b[36m%s\x1b[0m", "[Commands] Adding " + name + " command...");
 
@@ -23,6 +23,7 @@ class Command {
     this.description = description;
     this.cooldown = cooldown === false ? 0 : cooldown || 0;
     this.slashOptions = slashOptions;
+    this.ephemeral = ephemeral;
     commands[name] = this;
     
     console.log("\x1b[32m%s\x1b[0m", "[Commands] Finished adding " + name + " command");
@@ -34,7 +35,7 @@ class Command {
   async execute(interaction, componentResponse) {
 
     // Acknowledge the interaction
-    await interaction.acknowledge();
+    await interaction.defer(this.ephemeral ? 64 : undefined);
 
     // Check if the user is under cooldown
     const AuthorId = (interaction.member || interaction.user).id;
@@ -58,11 +59,11 @@ class Command {
     };
     try {
 
-      return await this.action(bot, interaction, waitForComponent, componentResponse);
+      await this.action(interaction, waitForComponent, componentResponse);
 
     } catch ({message}) {
 
-      return await interaction.createFollowup(message);
+      await interaction.createFollowup(message);
 
     }
 

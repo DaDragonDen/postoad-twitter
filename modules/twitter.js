@@ -1,11 +1,11 @@
 import { TwitterApi } from "twitter-api-v2";
 
-export default async (guildId, collections) => {
+export default async (guildId, collections, noTokens) => {
   
-  const twitterAuth = await collections.twitterAuthInfo.findOne({guildId: guildId});
+  const {accessToken, accessSecret} = await collections.twitterAuthInfo.findOne({guildId: guildId}) || {};
 
   // Check if we're authorized
-  if (!twitterAuth || !twitterAuth.access_token || !twitterAuth.access_secret) {
+  if (!noTokens && (!accessToken || !accessSecret)) {
     
     throw new Error("I don't have permission to use Twitter in this server");
 
@@ -15,8 +15,8 @@ export default async (guildId, collections) => {
   return new TwitterApi({
     appKey: process.env.twitterAPIKey,
     appSecret: process.env.twitterAPIKeySecret,
-    accessToken: twitterAuth.access_token,
-    accessSecret: twitterAuth.access_secret
+    accessToken,
+    accessSecret
   });
 
 };
