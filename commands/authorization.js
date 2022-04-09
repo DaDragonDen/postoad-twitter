@@ -29,6 +29,9 @@ export async function authorizeTwitter(code, verifier) {
       accessSecret
     });
 
+    // Delete the code.
+    delete oauthInfo[code];
+
   }
 
   // Save the new access tokens.
