@@ -24,22 +24,34 @@ export default (_, collections) => {
 
   };
 
-  new Command("like", "Like something on Twitter on behalf of the server.", async (bot, interaction) => await toggleLike(interaction, "like"), 0, [
-    {
-      name: "tweet_url",
-      description: "What do you want to like?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "like", 
+    description: "Like something on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleLike(interaction, "like"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "tweet_url",
+        description: "What do you want to like?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
 
-  new Command("unlike", "Unlike something on Twitter on behalf of the server.", async (bot, interaction) => await toggleLike(interaction, "unlike"), 0, [
-    {
-      name: "tweet_url",
-      description: "What do you want to unlike?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "unlike", 
+    description: "Unlike something on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleLike(interaction, "unlike"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "tweet_url",
+        description: "What do you want to unlike?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
   
 };

@@ -25,22 +25,34 @@ export default (_, collections) => {
 
   };
 
-  new Command("follow", "Follow someone on Twitter on behalf of the server.", async (bot, interaction) => await toggleFollow(interaction, "follow"), 0, [
-    {
-      name: "username",
-      description: "Who do you want to follow?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "follow", 
+    description: "Follow someone on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleFollow(interaction, "follow"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "username",
+        description: "Who do you want to follow?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
 
-  new Command("unfollow", "Unfollow someone on Twitter on behalf of the server.", async (bot, interaction) => await toggleFollow(interaction, "unfollow"), 0, [
-    {
-      name: "username",
-      description: "Who do you want to unfollow?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "unfollow", 
+    description: "Unfollow someone on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleFollow(interaction, "unfollow"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "username",
+        description: "Who do you want to unfollow?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
   
 };

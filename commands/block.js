@@ -25,22 +25,34 @@ export default (_, collections) => {
 
   };
 
-  new Command("block", "Block someone on Twitter on behalf of the server.", async (bot, interaction) => await toggleBlock(interaction, "block"), 0, [
-    {
-      name: "username",
-      description: "Who do you want to block?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "block", 
+    description: "Block someone on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleBlock(interaction, "block"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "username",
+        description: "Who do you want to block?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
 
-  new Command("unblock", "Unblock someone on Twitter on behalf of the server.", async (bot, interaction) => await toggleBlock(interaction, "unblock"), 0, [
-    {
-      name: "username",
-      description: "Who do you want to unblock?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "unblock", 
+    description: "Unblock someone on Twitter on behalf of the server.", 
+    action: async (interaction) => await toggleBlock(interaction, "unblock"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "username",
+        description: "Who do you want to unblock?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
   
 };

@@ -25,16 +25,22 @@ export default (_, collections) => {
 
   };
 
-  new Command("retweet", "Retweet something on behalf of the server.", async (bot, interaction) => toggleRetweet(interaction, "retweet"), 0, [
-    {
-      name: "tweet_url",
-      description: "What do you want to retweet?",
-      type: 3,
-      required: true
-    }
-  ]);
+  new Command({
+    name: "retweet", 
+    description: "Retweet something on behalf of the server.", 
+    action: async (interaction) => toggleRetweet(interaction, "retweet"), 
+    cooldown: 0, 
+    slashOptions: [
+      {
+        name: "tweet_url",
+        description: "What do you want to retweet?",
+        type: 3,
+        required: true
+      }
+    ]
+  });
 
-  new Command("unretweet", "Unretweet something on behalf of the server.", async (bot, interaction) => await toggleRetweet(interaction, "unretweet"), 0, [
+  new Command("unretweet", "Unretweet something on behalf of the server.", async (interaction) => await toggleRetweet(interaction, "unretweet"), 0, [
     {
       name: "tweet_url",
       description: "What do you want to unretweet?",
