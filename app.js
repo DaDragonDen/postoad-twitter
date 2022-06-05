@@ -2,15 +2,12 @@ import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import fs from "fs";
 import { Client as DiscordClient } from "eris";
-import { config as loadEnvironmentVariables } from "dotenv";
+import "dotenv/config";
 import fetch from "node-fetch";
 import initializeDB from "./database.js";
 import {initialize as initializeCommands, listCommands} from "./commands.js";
 import getTwitterClient from "./modules/twitter.js";
 import launchWebServer from "./server.js";
-
-// Set up the environment variables in .env.
-loadEnvironmentVariables();
 
 // We need to wrap this in an async block because we're using promises.
 (async () => {
