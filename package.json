@@ -1,4 +1,5 @@
 {
+  "name": "postoad",
   "scripts": {
     "start": "node app"
   },
