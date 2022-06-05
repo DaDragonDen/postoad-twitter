@@ -11,16 +11,18 @@ export default ({collections}) => {
 
     // Get Tweet ID
     const match = [...interaction.data.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
+    const tweetId = match[0]?.[1];
 
-    if (!match) throw new Error("That isn't a Tweet");
+    if (!tweetId) throw new Error("that isn't a tweet.");
 
-    const tweetId = match[0][1];
-
-    // Retweet the Tweet
+    // Get the Twitter client of the server.
     const twitter = await getTwitterClient(interaction.guildID, collections);
+
+    // Retweet (or unretweet) the post.
     const user = await twitter.currentUser();
-    
     await twitter.v2[action](user.id_str, tweetId);
+
+    // Tell the user.
     await interaction.createFollowup(action === "retweet" ? "shared it, shared it, shared it" : "done");
 
   };

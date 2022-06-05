@@ -15,14 +15,13 @@ export default ({collections, requestMedia}) => {
       // Get the Tweet ID
       const subcommand = interaction.data.options[0];
       const match = [...subcommand.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
+      const tweetId = match[0]?.[1];
 
-      if (!match) throw new Error("that isn't a tweet");
-
-      const tweetId = match[0][1];
+      if (!tweetId) throw new Error("that isn't a tweet");
 
       // Get the Twitter client
       const twitter = await getTwitterClient(interaction.guildID, collections);
-      const content = subcommand.options[1] && subcommand.options[1].value;
+      const content = subcommand.options?.[1]?.value;
       
       switch (subcommand.name) {
 

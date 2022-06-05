@@ -11,14 +11,14 @@ export default ({collections}) => {
 
     // Make sure the Tweet ID format is valid.
     const match = [...interaction.data.options[0].value.matchAll(/twitter\.com\/[^/]+\/[^/]+\/(?<tweetId>\d+)/gm)];
+    const tweetId = match[0]?.[1];
+    if (!tweetId) throw new Error("That isn't a Tweet.");
 
-    if (!match) throw new Error("That isn't a Tweet.");
-
-    // Like the Tweet
-    const tweetId = match[0][1];
+    // Get the server's Twitter account.
     const twitter = await getTwitterClient(interaction.guildID, collections);
     const user = await twitter.currentUser();
     
+    // Like (or unlike) the post.
     await twitter.v2[action](user.id_str, tweetId);
     await interaction.createFollowup(action === "like" ? "this is the one ♥" : "heartbroken 💔");
 
