@@ -119,11 +119,7 @@ import launchWebServer from "./server.js";
 
   });
 
-  bot.on("error", (err) => {
-
-    console.log("\x1b[33m%s\x1b[0m", "[Eris]: " + err);
-
-  });
+  bot.on("error", (err) => console.log("\x1b[33m%s\x1b[0m", "[Eris]: " + err));
 
   bot.once("ready", async () => {
 
