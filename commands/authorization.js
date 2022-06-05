@@ -50,7 +50,7 @@ export async function authorizeTwitter(code, verifier) {
 
 }
 
-export default (discordClient, collections) => {
+export default ({collections}) => {
 
   // Save the collections for later.
   collectionsCopy = collections;
