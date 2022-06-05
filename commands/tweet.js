@@ -13,7 +13,7 @@ export default ({collections, requestMedia}) => {
       await verifyPermissions(interaction.member, collections);
 
       const subcommand = interaction.data.options[0];
-      const content = subcommand.options && subcommand.options[0].value;
+      const content = subcommand.options?.[0]?.value;
       const twitter = await getTwitterClient(interaction.guildID, collections);
       
       switch (subcommand.name) {
