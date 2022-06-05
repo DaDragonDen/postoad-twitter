@@ -60,15 +60,24 @@ import launchWebServer from "./server.js";
             // Get the attachment buffers and get the media IDs
             const attachmentResponse = await fetch(attachment.url);
             const attachmentBody = await attachmentResponse.arrayBuffer();
-            mediaIds.push(await twitterClient.v1.uploadMedia(Buffer.from(attachmentBody), { type: "png" }));
+            mediaIds.push(await twitterClient.v1.uploadMedia(Buffer.from(attachmentBody), { mimeType: attachment.content_type }));
 
           }
 
           // Upload the Tweet.
-          const { data: tweet } = await twitterClient.v2.tweet(mediaRequest.content, { media: { media_ids: mediaIds } });
+          let tweet;
+          if (mediaRequest.replyingTo) {
+            
+            tweet = (await twitterClient.v2.reply(mediaRequest.content, mediaRequest.replyingTo, { media: { media_ids: mediaIds } })).data;
+
+          } else {
+
+            tweet = (await twitterClient.v2.tweet(mediaRequest.content, { media: { media_ids: mediaIds } })).data;
+
+          }
 
           return await msg.channel.createMessage({
-            content: "done https://twitter.com/i/status/" + tweet.id,
+            content: `done https://twitter.com/i/status/${tweet.id}`,
             allowedMentions: {
               repliedUser: true
             },
