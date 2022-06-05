@@ -1,7 +1,7 @@
 import { Command } from "../commands.js";
 
 // eslint-disable-next-line no-unused-vars
-export default (discordClient, collections) => {
+export default ({discordClient, collections}) => {
   
   new Command({
     name: "eval", 

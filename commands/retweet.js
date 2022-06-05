@@ -2,7 +2,7 @@ import { Command } from "../commands.js";
 import verifyPermissions from "../modules/check-permissions.js";
 import getTwitterClient from "../modules/twitter.js";
 
-export default (_, collections) => {
+export default ({collections}) => {
 
   const toggleRetweet = async (interaction, action) => {
 

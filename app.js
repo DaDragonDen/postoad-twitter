@@ -142,16 +142,21 @@ import launchWebServer from "./server.js";
 
       if (typeof module === "function") {
         
-        await module(bot, collections, async (interaction, content, type) => {
+        await module({
+          discordClient: bot,
+          collections, 
+          requestMedia: async (interaction, content, replyingTo) => {
 
-          const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload");
-        
-          mediaList[message.id] = {
-            poster: interaction.member.id,
-            content: content,
-            type: type
-          };
-        
+            const message = await interaction.createFollowup("reply to this message with the image(s) you want to upload");
+          
+            mediaList[message.id] = {
+              poster: interaction.member.id,
+              content,
+              replyingTo
+            };
+
+          }
+
         });
 
       }

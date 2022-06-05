@@ -2,7 +2,7 @@ import { Command } from "../commands.js";
 import verifyPermissions from "../modules/check-permissions.js";
 import getTwitterClient from "../modules/twitter.js";
 
-export default (_, collections, prepareForMedia) => {
+export default ({collections, requestMedia}) => {
 
   new Command({
     name: "tweet", 
@@ -29,7 +29,7 @@ export default (_, collections, prepareForMedia) => {
         case "media":
 
           // Prepare to get media
-          await prepareForMedia(interaction, content);
+          await requestMedia(interaction, content);
           break;
 
         default:
